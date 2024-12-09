@@ -1,19 +1,21 @@
 <script>
-    function type_show_value() {
+    function type_show_value(selectElement, cardId) {
         // ===================================== onchange type_id ===============================================
-        const dropdown_ = document.getElementById('type_id');
-        const label_switch = document.getElementById('div_switch');
-        const input_switch = document.getElementById('input_switch');
+        const card = document.getElementById(cardId); // เจาะจง card ที่เกี่ยวข้อง
+        const dropdown_ = card.querySelector('[id^="type_id"]'); // ตรวจสอบ selector ให้ถูกต้อง
+        const label_switch = card.querySelector('[id^="div_switch"]');
+        const input_switch_ = card.querySelector('[id^="input_switch"]');
+        const div_slide_range = card.querySelector('[id^="div_slide_range"]');
+        const input_slide_range = card.querySelector('[id^="input_slide_range"]');
+        const display_slide_range = card.querySelector('[id^="display_slide_range"]');
 
-        const div_slide_range = document.getElementById('div_slide_range');
-        const input_slide_range = document.getElementById('input_slide_range');
-        const display_slide_range = document.getElementById('display_slide_range');
-
-        console.log('type_id : change');
-        console.log("type_id : " + dropdown_.value);
+        console.log(`type_id (${cardId}) : change`);
+        console.log(`type_id (${cardId}) : ${dropdown_.value}`);
+        console.log(display_slide_range);
         if (dropdown_.value === "1") { // Digital in
             label_switch.hidden = false;
-            input_switch.disabled = true;
+            input_switch_.hidden = false;
+            input_switch_.disabled = true;
             // display_switch.hidden = true;
             div_slide_range.hidden = true;
             input_slide_range.hidden = true;
@@ -21,7 +23,8 @@
             display_slide_range.hidden = true;
         } else if (dropdown_.value === "2") { // Digital out
             label_switch.hidden = false;
-            input_switch.disabled = false;
+            input_switch_.hidden = false;
+            input_switch_.disabled = false;
             // display_switch.hidden = true;
             div_slide_range.hidden = true;
             input_slide_range.hidden = true;
@@ -29,7 +32,8 @@
             display_slide_range.hidden = true;
         } else if (dropdown_.value === "3") { // Analog in
             label_switch.hidden = true;
-            input_switch.disabled = true;
+            input_switch_.hidden = true;
+            input_switch_.disabled = true;
             // display_switch.hidden = true;
             div_slide_range.hidden = false;
             input_slide_range.hidden = true;
@@ -37,7 +41,8 @@
             display_slide_range.hidden = false;
         } else if (dropdown_.value === "4") { // Analog out
             label_switch.hidden = true;
-            input_switch.disabled = true;
+            input_switch_.hidden = true;
+            input_switch_.disabled = true;
             // display_switch.hidden = true;
             div_slide_range.hidden = false;
             input_slide_range.hidden = false;
@@ -45,7 +50,8 @@
             display_slide_range.hidden = false;
         } else {
             label_switch.hidden = true;
-            input_switch.disabled = true;
+            input_switch_.hidden = true;
+            input_switch_.disabled = true;
             // display_switch.hidden = true;
             div_slide_range.hidden = true;
             input_slide_range.hidden = true;

@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 
 
 
+include "../config/no-crash.php";
 include "../config/connect.php"; 
 
 

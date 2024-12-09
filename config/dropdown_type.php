@@ -5,14 +5,8 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 
-// ข้อมูลการเชื่อมต่อฐานข้อมูล
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "simulation";
-
-// เชื่อมต่อกับฐานข้อมูล
-$conn = new mysqli($servername, $username, $password, $database);
+include "../config/no-crash.php";
+include "../config/connect.php";
 
 // ตรวจสอบการเชื่อมต่อ
 if ($conn->connect_error) {

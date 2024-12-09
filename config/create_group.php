@@ -12,31 +12,28 @@ if ($conn->connect_error) {
 // ตรวจสอบว่าได้รับข้อมูลจากฟอร์มหรือไม่
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // รับข้อมูลจากฟอร์ม
-    $group_id = $_POST['group_id_new'] ?? null;
-    $device_id = $_POST['device_id_new'] ?? null;
-    $type_id = $_POST['type_id_new'] ?? null;
-    $data_id = $_POST['data_id_new'] ?? null;
-    $value_ = $_POST['box_update_output_new'] ?? null;
+    $name_group = $_POST['input_create_group_id'] ?? null;
 
     // ตรวจสอบค่าที่รับมา (สามารถเพิ่ม validation ได้)
-    if (!$group_id || !$device_id || !$type_id || !$data_id || !$value_) {
+    if (!$name_group) {
         echo "Missing required fields.";
         exit();
     }
 
+
     // สร้างคำสั่ง SQL สำหรับการบันทึกข้อมูล
-    $sql = "INSERT INTO value_device (group_id, device_id, type_id, data_id, value, is_deleted)
-            VALUES (?, ?, ?, ?, ?, 0)";
+    $sql = "INSERT INTO groups (name_group, is_deleted)
+            VALUES (?, 0)";
 
     // เตรียมคำสั่ง SQL
     $stmt = $conn->prepare($sql);
     if ($stmt) {
         // ผูกค่ากับคำสั่ง SQL
-        $stmt->bind_param("iiiid", $group_id, $device_id, $type_id, $data_id, $value_);
+        $stmt->bind_param("s", $name_group);
 
         // ดำเนินการคำสั่ง
         if ($stmt->execute()) {
-            header("Location: ../pages/manager.php");
+            header("Location: ../pages/group_manager.php");
         } else {
             echo "Error: " . $stmt->error;
         }
@@ -51,4 +48,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // ปิดการเชื่อมต่อฐานข้อมูล
 $conn->close();
 exit()
+
 ?>
