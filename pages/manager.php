@@ -28,7 +28,9 @@
     </div>
 
     <?php include "../components/footer.php"; ?>
-    <?php include "../include/script_card.php"; ?>
+    <?php
+     include "../include/script_card.php"; 
+    ?>
 
 </body>
 

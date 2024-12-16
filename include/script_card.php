@@ -8,9 +8,15 @@
 <script>
     <?php include "../components/functions.js"; ?>
     let item_ = '';
+    const switch_ = document.getElementById('update_switch');
+    let submissionInterval;
+
+
     // JavaScript สำหรับเพิ่ม div
     document.addEventListener('DOMContentLoaded', async function() {
 
+        let form_data_length = <?php echo $form_data_length; ?>;
+        const contentContainer = document.getElementById('contentContainer');
 
         const response_value = await fetch('../config/dropdown_value.php'); // เรียกใช้ PHP
         const options_value = await response_value.json(); // รับผลลัพธ์เป็น JSON
@@ -21,10 +27,8 @@
             item_ = options_value[count_round];
 
             if (item_.is_deleted === "0") {
-                const contentContainer = document.getElementById('contentContainer');
 
                 <?php include "../include/div_dropdown.js"; ?>
-                // form.action = '../config/api_to_db.php'; // URL ที่จะส่งข้อมูล
 
                 // set switch on/off form db
                 if (item_.type_id === "4" || item_.type_id == "2") {
@@ -55,14 +59,47 @@
 
                 // เพิ่มรอบ ตาม value_device
                 type_show_value(dropdown_type, cardDiv.id);
-
             }
 
             count_round++;
 
         }
+
+
+
+
+        console.log("page is loaded.");
+
+        if (switch_.checked) {
+            console.log(' >>> Start Upload form. [Onload] <<<');
+            toggleSwitch(true);
+            console.log("START form length [Onload] : " + form_data_length);
+            startFormSubmission(form_data_length); // เริ่มส่งฟอร์ม
+        } else {
+            console.log(' >>> Stop Upload form. [Onload] <<<');
+            <?php $form_data_length = 0; ?>
+            console.log("STOP form length [Onload] : " + form_data_length);
+            toggleSwitch(false);
+            stopFormSubmission(); // หยุดการส่งฟอร์ม
+        }
     });
 
+    switch_.addEventListener('change', async () => {
+
+        let form_data_length = <?php echo $form_data_length; ?>;
+        if (switch_.checked) {
+            console.log(' >>> Start Upload form. [Change] <<<');
+            toggleSwitch(true);
+            console.log("START form length [Change] : " + form_data_length);
+            startFormSubmission(form_data_length); // เริ่มส่งฟอร์ม
+        } else {
+            console.log(' >>> Stop Upload form. [Change] <<<');
+            <?php $form_data_length = 0; ?>
+            console.log("STOP form length [Change] : " + form_data_length);
+            toggleSwitch(false);
+            stopFormSubmission(); // หยุดการส่งฟอร์ม
+        }
+    });
 
 
     // JavaScript สำหรับเพิ่ม div
@@ -82,7 +119,6 @@
         cardText.textContent = "This is description of new device.";
         edit_Title.value = "New Device";
         edit_desc.value = "This is description of new device.";
-        <?php include "../components/functions.js"; ?>
 
         await Promise.all([
             fetchAndPopulateDropdown('../config/dropdown_group.php', dropdown_group),
@@ -97,37 +133,5 @@
 
         console.log('Add Monitor[' + item_.id + '] success.');
 
-    });
-
-    const switch_ = document.getElementById('update_switch');
-    switch_.addEventListener('change', async () => {
-
-        console.log('=========== now switch is ' + switch_.checked + ' ==========');
-
-        while (switch_.checked) {
-            let count = 0;
-            const forms = document.getElementById('contentContainer').querySelectorAll('[id^="form_"]');
-            for (const form of forms) {
-
-                const formData = new FormData(form);
-
-                // const idCardElement = form.querySelector('#id_card');
-                // console.log('id_card : ' + idCardElement.value);
-
-                // ส่งข้อมูลไปยังเซิร์ฟเวอร์
-                try {
-                    const response = await fetch('../config/api_to_db.php', {
-                        method: 'POST',
-                        body: formData,
-                    });
-                } catch (error) {}
-
-
-                count++;
-                console.log('form ที่ ' + count + ' ส่งสำเร็จ')
-            }
-            console.log('การส่งฟอร์มทั้งหมดเสร็จสิ้น');
-            await delay(4000);
-        }
     });
 </script>

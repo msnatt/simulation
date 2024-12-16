@@ -5,7 +5,7 @@
         <div class="d-flex align-items-center">
             <label class="text-white me-3" style="height: 30px; width: 50px;">Publish</label>
             <label class="switch me-4">
-                <input class="input" type="checkbox" id="update_switch" name="update_switch" >
+                <input class="input" type="checkbox" id="update_switch" name="update_switch" <?php echo $switch_state ? "checked" : ""; ?> >
                 <span class="slider"></span>
             </label>
             <i class="bi bi-gear me-3"></i>

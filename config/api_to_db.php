@@ -1,5 +1,6 @@
 <?php
 // ตั้งค่าการเชื่อมต่อฐานข้อมูล
+session_start();
 include "../config/connect.php";
 
 // ตรวจสอบการเชื่อมต่อ
@@ -7,8 +8,11 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+
 // URL ของ API ที่ต้องการส่งข้อมูล
 $url = "https://iot-demo.tikky.xyz/api_push_data_by_hardware_process.php";
+
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // รับข้อมูลจากฟอร์ม
@@ -23,14 +27,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // ตรวจสอบค่าที่รับมา (สามารถเพิ่ม validation ได้)
     if (is_null($name_device) || is_null($group_id) || is_null($device_id) || is_null($type_id) || is_null($data_id) || is_null($value_)) {
-        echo "name_device: $name_device<br>";
-        echo "card_id: $card_id<br>";
-        echo "group_id: $group_id<br>";
-        echo "device_id: $device_id<br>";
-        echo "type_id: $type_id<br>";
-        echo "data_id: $data_id<br>";
-        echo "value_: $value_<br>";
-        echo "Missing required fields.";
         exit();
     }
     // ข้อมูลที่ต้องการส่ง to db p tik
@@ -112,6 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo ($response);
     }
 }
+
 
 // ปิดการเชื่อมต่อ cURL
 curl_close($ch);

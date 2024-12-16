@@ -60,47 +60,79 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function checkpublish_switch(switch_, is_checked) {
-
+// ฟังก์ชันเพื่อส่งคำขอไปที่ PHP เพื่ออัปเดตค่า session
+function toggleSwitch(state) {
+    fetch('../components/switch_state.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ switch_state: state }) // ส่งค่า switch_state ไปยัง PHP
+    })
+        .then(response => response.json())
+        .then(data => {
+            // แสดงผลลัพธ์หลังการอัปเดตค่า session
+            if (data.success) {
+                console.log('Switch state updated to:', state ? 'ON' : 'OFF');
+            }
+        })
+        .catch(error => console.error('Error:', error));
 }
 
-// async function update_switch_func() {
-//     console.log('=========== now switch is ' + switch_.checked + ' ==========');
-
-//     if (switch_.checked) {
-//         $_SESSION['switch_state'] = true;
-//     }else{
-//         $_SESSION['switch_state'] = false;
-//     }
-
-//     while (switch_.checked) {
-//         let count = 0;
-//         const forms = document.getElementById('contentContainer').querySelectorAll('[id^="form_"]');
-//         for (const form of forms) {
-//             // แปลงค่าจากฟอร์มเป็น FormData
-//             const formData = new FormData(form);
-//             // ใช้ querySelector เพื่อดึงองค์ประกอบที่มี id เป็น 'id_card'
-//             const idCardElement = form.querySelector('#id_card');
-//             console.log('id_card : ' + idCardElement.value);
-
-//             // ส่งข้อมูลไปยังเซิร์ฟเวอร์
-//             try {
-//                 const response = await fetch('../config/api_to_db.php', {
-//                     method: 'POST',
-//                     body: formData,
-//                 });
-//             } catch (error) { }
 
 
-//             count++;
-//             console.log('form ที่ ' + count + ' ส่งสำเร็จ')
-//         }
-//         console.log('การส่งฟอร์มทั้งหมดเสร็จสิ้น');
-//         await delay(4000);
-//     }
+async function startFormSubmission(session_count) {
+    let count = 0;
+    console.log('Switch : ' + switch_.checked);
 
-// }
+    while (switch_.checked) {
+        const formItems = contentContainer.querySelectorAll('[id^="form_"]');
 
+        if ((formItems.length - session_count) === 0) {
+            await delay(1000);            // delay 10 second
+            if (count === formItems.length) {
+                count = 0;
+                console.log('การส่งฟอร์มทั้งหมดเสร็จสิ้น');
+            }
+            const form = new FormData(formItems[count]);
+            console.log(">>> กำลังส่งฟอร์มที่ " + parseInt(count + 1));
+            
+            fetch('../config/api_to_db.php', {
+                method: 'POST',
+                body: form
+            }).catch(error => console.error('Error:', error));
+            console.log(">>> ส่งสำเร็จ. <<< ");
+
+        }
+        else if (session_count < formItems.length) {
+            console.log("Add " + count + " to Session.");
+            console.log(formItems[count]);
+            fetch('../include/session_form.php', {
+                method: 'POST',
+                body: form
+            })
+                .then(response => response.json())
+
+                .catch(error => console.error('Error:', error));
+            session_count++;
+        }
+
+        count++;
+    }
+}
+
+
+function stopFormSubmission() {
+    // เรียก API ล้างข้อมูลใน Session
+    fetch('../include/session_clear.php', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message);
+        })
+        .catch(error => console.error('Error:', error));
+
+    clearInterval(submissionInterval); // หยุดการวนลูปส่งฟอร์ม
+}
 
 async function fetchAndPopulateDropdown(url, dropdown, selectedValue) {
     try {

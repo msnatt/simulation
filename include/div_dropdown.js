@@ -226,7 +226,7 @@ input_r.type = 'range';
 input_r.className = 'form-range mt-4';
 input_r.id = 'input_slide_range_' + item_.id;
 input_r.min = '0'; // ค่าต่ำสุดของ slider
-input_r.max = '5000'; // ค่าสูงสุดของ slider
+input_r.max = '10000'; // ค่าสูงสุดของ slider
 
 
 
